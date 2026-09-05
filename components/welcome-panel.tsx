@@ -31,7 +31,7 @@ export function WelcomePanel() {
           <span aria-hidden="true" className="text-gold-deep">
             <SankofaMark className="size-6" />
           </span>
-          Sankofa · go back and fetch it
+          Sankofa 
         </p>
 
         <h1
@@ -45,7 +45,7 @@ export function WelcomePanel() {
           className="animate-rise mt-6 max-w-xl text-balance text-lg leading-relaxed text-muted-foreground sm:text-xl"
           style={{ animationDelay: "160ms" }}
         >
-          Learn the stories, traditions, language and wisdom that connect you to
+          Learn the stories, traditions and wisdom that connect you to
           your heritage.
         </p>
 
