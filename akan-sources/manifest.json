@@ -1,0 +1,22 @@
+{
+  "sources": [
+    {
+      "id": "ampene-akan-civilization-history",
+      "file": "Akan_Civilization_and_History_African_Musicologica.pdf",
+      "title": "Akan Civilization and History",
+      "author": "Kwasi Ampene",
+      "source": "Música e Cultura, vol. 13, no. 3 (2024)",
+      "description": "Scholarly article by Kwasi Ampene (Tufts University) on Akan civilization and history, approached through contemporary African musicological inquiry. Cover article of the special dossier \"Etnomusicologia Negra\".",
+      "tags": ["history", "stories", "language", "traditions", "proverbs"]
+    },
+    {
+      "id": "akan-people-documentary-history-review",
+      "file": "div-class-title-indigenous-and-exogenous-sources-the-akan-people-a-documentary-history-by-kwasikonadu-princeton-nj-markus-wiener-publishers-2014-pp-xv-446-68-95-hardback-isbn-978-0-44879-5795-div1.pdf",
+      "title": "Indigenous and Exogenous Sources",
+      "author": "Emmanuel Ababio Ofosu-Mensah, University of Ghana",
+      "source": "The Journal of African History, vol. 56, no. 3 (2015), pp. 493–494",
+      "description": "Book review of Kwasi Konadu, \"The Akan People: A Documentary History\" (Markus Wiener Publishers, 2014). Surveys how Akan history has been reconstructed from indigenous (oral) and exogenous (European/Islamic) written sources, including naming politics, oral traditions, Asante and Fante states and states of knowledge about Akan origins.",
+      "tags": ["history", "stories", "names", "traditions", "family"]
+    }
+  ]
+}
