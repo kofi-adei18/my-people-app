@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# family loop local data store (seeded from lib/family/seed.ts on first run)
+/data
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

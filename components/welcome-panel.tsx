@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -109,6 +110,14 @@ export function WelcomePanel() {
 
         <footer className="mt-12 text-center text-xs text-muted-foreground">
           Grounded in a curated knowledge base · Asante · Asante Twi · Ghana
+          <div className="mt-2">
+            <Link
+              href="/family"
+              className="underline decoration-dotted underline-offset-4 transition-colors hover:text-foreground"
+            >
+              Ask My Family
+            </Link>
+          </div>
         </footer>
       </main>
     </div>

@@ -84,12 +84,15 @@ function writeJson(key: string, value: unknown): void {
 }
 
 export function ProfileProvider({ children }: { children: ReactNode }) {
-  const [profile, setProfile] = useState<UserProfile | null>(() =>
-    readJson<UserProfile>(PROFILE_STORAGE_KEY),
-  );
-  const [progress, setProgress] = useState<LearningProgress | null>(() =>
-    readJson<LearningProgress>(PROGRESS_STORAGE_KEY),
-  );
+  // Start from the server's empty state; read localStorage only after mount so
+  // the first client render matches the SSR HTML (avoids hydration errors).
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [progress, setProgress] = useState<LearningProgress | null>(null);
+
+  useEffect(() => {
+    setProfile(readJson<UserProfile>(PROFILE_STORAGE_KEY));
+    setProgress(readJson<LearningProgress>(PROGRESS_STORAGE_KEY));
+  }, []);
 
   useEffect(() => {
     if (profile) writeJson(PROFILE_STORAGE_KEY, profile);

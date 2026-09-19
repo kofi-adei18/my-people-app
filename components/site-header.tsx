@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "cn";
-import { MessageCircleHeartIcon } from "lucide-react";
+import { UsersIcon } from "lucide-react";
 import { BrandLogo } from "@/components/brand";
 import { useProfile } from "@/lib/profile-context";
 import { CONNECTION_LABELS } from "@/lib/constants";
@@ -11,7 +11,9 @@ import { CONNECTION_LABELS } from "@/lib/constants";
 const NAV = [
   { href: "/journey", label: "My Journey" },
   { href: "/events", label: "Events" },
+  { href: "/family", label: "Ask My Family" },
   { href: "/culture-bank", label: "Culture Bank" },
+  { href: "/heritage", label: "Heritage" },
   { href: "/settings", label: "Settings" },
 ];
 
@@ -48,12 +50,12 @@ export function SiteHeader() {
 
         <div className="flex items-center gap-2">
           <Link
-            href="/ask"
-            aria-label="Ask My People anything about your heritage"
-            title="Ask My People"
+            href="/family"
+            aria-label="Ask your family about your heritage"
+            title="Ask My Family"
             className="flex size-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <MessageCircleHeartIcon className="size-4" aria-hidden="true" />
+            <UsersIcon className="size-4" aria-hidden="true" />
           </Link>
           <Link
             href={isCustomized ? "/onboarding" : "/onboarding"}

@@ -106,8 +106,8 @@ export function CultureBankView() {
 
       <p className="mt-10 text-center text-xs text-muted-foreground">
         Want to go deeper on any of it?{" "}
-        <a href="/ask" className="underline underline-offset-4 hover:text-foreground">
-          Ask My People
+        <a href="/heritage" className="underline underline-offset-4 hover:text-foreground">
+          Visit Your Heritage
         </a>
       </p>
     </main>

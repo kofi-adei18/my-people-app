@@ -211,8 +211,8 @@ export function JourneyView() {
 
       <p className="mt-10 text-center text-xs text-muted-foreground">
         Curious about something specific?{" "}
-        <Link href="/ask" className="underline underline-offset-4 hover:text-foreground">
-          Ask My People
+        <Link href="/family" className="underline underline-offset-4 hover:text-foreground">
+          Ask My Family
         </Link>
       </p>
     </main>
