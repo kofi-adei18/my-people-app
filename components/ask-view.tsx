@@ -19,6 +19,7 @@ import { SourcesList } from "@/components/sources-list";
 import { SankofaMark } from "@/components/brand";
 import { Markdown } from "@/components/markdown";
 import { useProfile } from "@/lib/profile-context";
+import { uid, stamp } from "@/lib/id";
 import { SUGGESTED_QUESTIONS } from "@/lib/constants";
 import type { ChatMessage } from "@/lib/types";
 
@@ -30,8 +31,8 @@ export function AskView() {
     {
       id: "intro",
       role: "assistant",
-      content: `Hello, ${profile.language === "English / Learning Twi" ? "and welcome — I speak a little Twi too!" : "and welcome"}. Ask me anything about your Akan heritage — your family, your names, your proverbs, your past — and I'll ground my answer in My People's curated sources.`,
-      createdAt: Date.now(),
+      content: `Hello, and welcome. Ask me anything about your Asante heritage — greetings, titles, etiquette, or the story behind them — and I'll ground my answer in My People's curated sources.`,
+      createdAt: stamp(),
       suggested: SUGGESTED_QUESTIONS.map((s) => s.question),
     },
   ]);
@@ -67,19 +68,19 @@ export function AskView() {
     if (!text || pending) return;
     setError(null);
     const userMessage: ChatMessage = {
-      id: crypto.randomUUID(),
+      id: uid("m"),
       role: "user",
       content: text,
-      createdAt: Date.now(),
+      createdAt: stamp(),
     };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setPending(true);
 
-    const thinkingId = crypto.randomUUID();
+    const thinkingId = uid("t");
     setMessages((prev) => [
       ...prev,
-      { id: thinkingId, role: "assistant", content: "", createdAt: Date.now() },
+      { id: thinkingId, role: "assistant", content: "", createdAt: stamp() },
     ]);
 
     try {

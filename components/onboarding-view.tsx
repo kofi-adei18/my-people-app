@@ -2,258 +2,271 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Field, FieldDescription, FieldGroup, FieldTitle } from "@/components/ui/field";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "cn";
-import { CheckIcon, ShieldIcon } from "lucide-react";
-import { useProfile } from "@/lib/profile-context";
 import {
-  HERITAGE_OPTIONS,
-  INTERESTS,
-  KNOWLEDGE_LEVELS,
-  LANGUAGE_OPTIONS,
+  RadioGroup,
+  RadioGroupItem,
+} from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { SankofaMark } from "@/components/brand";
+import { useProfile, type OnboardingAnswers } from "@/lib/profile-context";
+import {
+  CULTURAL_CONNECTION_OPTIONS,
+  FAMILY_KNOWLEDGE_OPTIONS,
+  LEARNING_GOAL_OPTIONS,
+  LEARNING_PREFERENCE_OPTIONS,
+  LOCATION_OPTIONS,
 } from "@/lib/constants";
-import type { Interest, KnowledgeLevel, Language } from "@/lib/types";
+import type { LearningGoal } from "@/lib/types";
+
+const STEPS = [
+  { title: "Where are you?", eyebrow: "Step 1 of 5", blurb: "It shapes how I frame everything for you." },
+  { title: "How connected do you feel?", eyebrow: "Step 2 of 5", blurb: "There's no wrong answer — it's your starting point." },
+  { title: "What does your family know?", eyebrow: "Step 3 of 5", blurb: "It lets me ask the right questions later." },
+  { title: "What do you want out of this?", eyebrow: "Step 4 of 5", blurb: "Pick as many as you like — I'll weave them in." },
+  { title: "How do you like to learn?", eyebrow: "Step 5 of 5", blurb: "Last one — the journey adapts to this." },
+];
 
 export function OnboardingView() {
   const router = useRouter();
-  const { profile, setProfile, markCustomized } = useProfile();
+  const { createProfile, isCustomized } = useProfile();
 
-  const [language, setLanguage] = useState<Language>(profile.language);
-  const [knowledgeLevel, setKnowledgeLevel] = useState<KnowledgeLevel>(
-    profile.knowledgeLevel,
-  );
-  const [interests, setInterests] = useState<Interest[]>(profile.interests);
-  const [reviewing, setReviewing] = useState(false);
+  const [step, setStep] = useState(0);
+  const [answers, setAnswers] = useState<OnboardingAnswers>({
+    location: undefined as never,
+    culturalConnectionLevel: undefined as never,
+    familyKnowledgeLevel: undefined as never,
+    learningGoals: [],
+    preferredLearningStyle: undefined as never,
+  });
 
-  const toggleInterest = (value: Interest) => {
-    setInterests((prev) =>
-      prev.includes(value) ? prev.filter((i) => i !== value) : [...prev, value],
-    );
-  };
+  const patch = (p: Partial<OnboardingAnswers>) =>
+    setAnswers((prev) => ({ ...prev, ...p }));
 
-  const create = () => {
-    setProfile({
-      heritage: "Akan",
-      language,
-      knowledgeLevel,
-      interests,
+  const canContinue =
+    step === 0
+      ? Boolean(answers.location)
+      : step === 1
+        ? Boolean(answers.culturalConnectionLevel)
+        : step === 2
+          ? Boolean(answers.familyKnowledgeLevel)
+          : step === 3
+            ? answers.learningGoals.length > 0
+            : Boolean(answers.preferredLearningStyle);
+
+  const toggleGoal = (goal: LearningGoal) => {
+    patch({
+      learningGoals: answers.learningGoals.includes(goal)
+        ? answers.learningGoals.filter((g) => g !== goal)
+        : [...answers.learningGoals, goal],
     });
-    markCustomized();
-    setReviewing(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const begin = () => router.push("/journey");
-
-  if (reviewing) {
-    return <ProfileSummary {...{ language, knowledgeLevel, interests, onCreate: create, onBegin: begin }} />;
-  }
+  const submit = () => {
+    createProfile(answers);
+    router.replace("/journey");
+  };
 
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-col px-6 py-12">
-      <header className="mb-10 text-center">
-        <p className="eyebrow">Build your profile</p>
-        <h1 className="font-display mt-3 text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
-          Your Cultural Profile
-        </h1>
-        <p className="mt-3 text-muted-foreground">
-          Four quick answers shape everything My People teaches you.
-        </p>
+    <div className="relative flex min-h-svh flex-col">
+      <header className="mx-auto flex w-full max-w-xl items-center justify-between px-6 pt-8">
+        <SankofaMark className="size-8 text-gold" />
+        <span className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+          {STEPS[step].eyebrow}
+        </span>
       </header>
 
-      <FieldGroup className="gap-8">
-        <div className="grid gap-5 sm:grid-cols-2">
-          <Field>
-            <FieldTitle>Where does your heritage connect to?</FieldTitle>
-            <p className="text-sm font-medium text-foreground">{HERITAGE_OPTIONS[0]}</p>
-          </Field>
+      <div
+        className="mt-6 h-1 w-full bg-border"
+        role="progressbar"
+        aria-valuemin={1}
+        aria-valuemax={STEPS.length}
+        aria-valuenow={step + 1}
+      >
+        <div
+          className="h-full bg-gold-deep transition-all duration-500"
+          style={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
+        />
+      </div>
 
-          <Field>
-            <FieldTitle>Which language are you most connected to?</FieldTitle>
-            <ToggleGroup
-              type="single"
-              value={language}
-              onValueChange={(v) => v && setLanguage(v as Language)}
-              spacing={1.5}
-              className="flex flex-wrap"
+      <main className="mx-auto flex w-full max-w-xl flex-1 flex-col px-6 py-8">
+        <h1 className="font-display text-3xl font-medium tracking-tight text-foreground">
+          {STEPS[step].title}
+        </h1>
+        <p className="mt-2 text-balance text-muted-foreground">
+          {STEPS[step].blurb}
+        </p>
+
+        <div className="mt-8 flex-1">
+          {step === 0 && (
+            <RadioGroup
+              value={answers.location}
+              onValueChange={(v) =>
+                patch({ location: v as OnboardingAnswers["location"] })
+              }
             >
-              {LANGUAGE_OPTIONS.map((lang) => (
-                <ToggleGroupItem key={lang} value={lang}>
-                  {lang}
-                </ToggleGroupItem>
+              {LOCATION_OPTIONS.map((opt) => (
+                <OptionCard key={opt.value} checked={answers.location === opt.value} htmlFor={`loc-${opt.value}`}>
+                  <RadioGroupItem value={opt.value} id={`loc-${opt.value}`} />
+                  <span className="font-semibold">{opt.label}</span>
+                  <OptionBlurb>{opt.blurb}</OptionBlurb>
+                </OptionCard>
               ))}
-            </ToggleGroup>
-          </Field>
+            </RadioGroup>
+          )}
+
+          {step === 1 && (
+            <RadioGroup
+              value={answers.culturalConnectionLevel}
+              onValueChange={(v) =>
+                patch({
+                  culturalConnectionLevel: v as OnboardingAnswers["culturalConnectionLevel"],
+                })
+              }
+            >
+              {CULTURAL_CONNECTION_OPTIONS.map((opt) => (
+                <OptionCard key={opt.value} checked={answers.culturalConnectionLevel === opt.value} htmlFor={`conn-${opt.value}`}>
+                  <RadioGroupItem value={opt.value} id={`conn-${opt.value}`} />
+                  <span className="font-semibold">{opt.label}</span>
+                  <OptionBlurb>{opt.blurb}</OptionBlurb>
+                </OptionCard>
+              ))}
+            </RadioGroup>
+          )}
+
+          {step === 2 && (
+            <RadioGroup
+              value={answers.familyKnowledgeLevel}
+              onValueChange={(v) =>
+                patch({
+                  familyKnowledgeLevel: v as OnboardingAnswers["familyKnowledgeLevel"],
+                })
+              }
+            >
+              {FAMILY_KNOWLEDGE_OPTIONS.map((opt) => (
+                <OptionCard key={opt.value} checked={answers.familyKnowledgeLevel === opt.value} htmlFor={`fam-${opt.value}`}>
+                  <RadioGroupItem value={opt.value} id={`fam-${opt.value}`} />
+                  <span className="font-semibold">{opt.label}</span>
+                  <OptionBlurb>{opt.blurb}</OptionBlurb>
+                </OptionCard>
+              ))}
+            </RadioGroup>
+          )}
+
+          {step === 3 && (
+            <div className="grid gap-2">
+              {LEARNING_GOAL_OPTIONS.map((opt) => (
+                <OptionCard
+                  key={opt.value}
+                  checked={answers.learningGoals.includes(opt.value)}
+                >
+                  <Checkbox
+                    id={`goal-${opt.value}`}
+                    checked={answers.learningGoals.includes(opt.value)}
+                    onCheckedChange={() => toggleGoal(opt.value as LearningGoal)}
+                  />
+                  <Label htmlFor={`goal-${opt.value}`} className="cursor-pointer font-semibold">
+                    {opt.label}
+                  </Label>
+                  <OptionBlurb>{opt.blurb}</OptionBlurb>
+                </OptionCard>
+              ))}
+            </div>
+          )}
+
+          {step === 4 && (
+            <RadioGroup
+              value={answers.preferredLearningStyle}
+              onValueChange={(v) =>
+                patch({
+                  preferredLearningStyle: v as OnboardingAnswers["preferredLearningStyle"],
+                })
+              }
+            >
+              {LEARNING_PREFERENCE_OPTIONS.map((opt) => (
+                <OptionCard key={opt.value} checked={answers.preferredLearningStyle === opt.value} htmlFor={`style-${opt.value}`}>
+                  <RadioGroupItem value={opt.value} id={`style-${opt.value}`} />
+                  <span className="font-semibold">{opt.label}</span>
+                  <OptionBlurb>{opt.blurb}</OptionBlurb>
+                </OptionCard>
+              ))}
+            </RadioGroup>
+          )}
+
+          {step === 1 && isCustomized && (
+            <p className="mt-4 text-xs text-muted-foreground">
+              Editing your profile will restart your journey from Day 1.
+            </p>
+          )}
         </div>
 
-        <Field>
-          <FieldTitle>How familiar are you with your culture?</FieldTitle>
-          <ToggleGroup
-            type="single"
-            value={knowledgeLevel}
-            onValueChange={(v) => v && setKnowledgeLevel(v as KnowledgeLevel)}
-            spacing={1.5}
-            className="flex flex-col"
+        <div className="mt-8 flex items-center justify-between gap-3 pb-4">
+          <Button
+            type="button"
+            variant="ghost"
+            className="rounded-full px-4"
+            onClick={() =>
+              step === 0 ? router.push(isCustomized ? "/journey" : "/") : setStep((s) => s - 1)
+            }
           >
-            {KNOWLEDGE_LEVELS.map((opt) => (
-              <OptionCard
-                key={opt.value}
-                active={knowledgeLevel === opt.value}
-                title={opt.label}
-                blurb={opt.blurb}
-                onClick={() => setKnowledgeLevel(opt.value)}
-              />
-            ))}
-          </ToggleGroup>
-        </Field>
+            <ArrowLeftIcon data-icon="inline-start" />
+            {step === 0 ? (isCustomized ? "Journey" : "Home") : "Back"}
+          </Button>
 
-        <Field>
-          <FieldTitle>What would you like to discover?</FieldTitle>
-          <FieldDescription>Select all that interest you.</FieldDescription>
-          <ToggleGroup
-            type="multiple"
-            value={interests}
-            onValueChange={(v) => setInterests(v as Interest[])}
-            spacing={1.5}
-            className="flex flex-col"
-          >
-            {INTERESTS.map((opt) => (
-              <OptionCard
-                key={opt.value}
-                active={interests.includes(opt.value)}
-                title={opt.label}
-                blurb={opt.blurb}
-                onClick={() => toggleInterest(opt.value)}
-              />
-            ))}
-          </ToggleGroup>
-        </Field>
-
-        {interests.length === 0 && (
-          <p className="-mt-4 text-sm text-destructive">
-            Pick at least one interest so My People can personalise your journey.
-          </p>
-        )}
-
-        <Button onClick={create} size="lg" className="h-11 rounded-full text-base">
-          Create My Cultural Profile
-        </Button>
-      </FieldGroup>
-    </main>
+          {step < STEPS.length - 1 ? (
+            <Button
+              type="button"
+              className="rounded-full px-5"
+              disabled={!canContinue}
+              onClick={() => setStep((s) => s + 1)}
+            >
+              Next
+              <ArrowRightIcon data-icon="inline-end" />
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              className="rounded-full px-5"
+              disabled={!canContinue}
+              onClick={submit}
+            >
+              {isCustomized ? "Save & restart journey" : "Begin my journey"}
+              <ArrowRightIcon data-icon="inline-end" />
+            </Button>
+          )}
+        </div>
+      </main>
+    </div>
   );
 }
 
 function OptionCard({
-  active,
-  title,
-  blurb,
-  onClick,
+  children,
+  checked,
+  htmlFor,
 }: {
-  active: boolean;
-  title: string;
-  blurb: string;
-  onClick: () => void;
+  children: React.ReactNode;
+  checked?: boolean;
+  htmlFor?: string;
 }) {
-  return (
-    <button
-      type="button"
-      aria-pressed={active}
-      onClick={onClick}
-      className={cn(
-        "flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        active
-          ? "border-primary/40 bg-primary/5 text-foreground"
-          : "border-border bg-card hover:bg-muted/50",
-      )}
-    >
-      <span
-        aria-hidden="true"
-        className={cn(
-          "flex size-5 shrink-0 items-center justify-center rounded-md border",
-          active
-            ? "border-primary bg-primary text-primary-foreground"
-            : "border-border",
-        )}
-      >
-        {active && <CheckIcon className="size-3.5" />}
-      </span>
-      <span className="flex flex-col">
-        <span className="text-sm font-medium">{title}</span>
-        <span className="text-xs text-muted-foreground">{blurb}</span>
-      </span>
-    </button>
-  );
-}
-
-function ProfileSummary({
-  language,
-  knowledgeLevel,
-  interests,
-  onBegin,
-}: {
-  language: Language;
-  knowledgeLevel: KnowledgeLevel;
-  interests: Interest[];
-  onBegin: () => void;
-}) {
-  const levelLabel = KNOWLEDGE_LEVELS.find((l) => l.value === knowledgeLevel)?.label;
-
-  return (
-    <main className="mx-auto flex w-full max-w-xl flex-col px-6 py-12">
-      <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-        <ShieldIcon className="size-7" />
-      </div>
-      <p className="eyebrow mt-6 text-center">Your heritage, in one picture</p>
-      <h1
-        aria-label="Your Akan Heritage"
-        className="font-display mt-3 text-center text-4xl font-medium tracking-tight text-foreground"
-      >
-        Your Akan Heritage
-      </h1>
-
-      <div className="mt-8 space-y-4">
-        <SummaryRow label="People" value="Akan" />
-        <SummaryRow label="Language" value={language} />
-        <SummaryRow label="Experience" value={levelLabel ?? "Just starting"} />
-        <div className="flex items-start justify-between gap-6 border-t border-border py-2">
-          <dt className="pt-1.5 text-sm font-medium text-foreground">Interests</dt>
-          <dd className="flex flex-wrap justify-end gap-1.5">
-            {interests.length > 0 ? (
-              interests.map((i) => {
-                const opt = INTERESTS.find((o) => o.value === i);
-                return (
-                  <Badge key={i} variant="secondary">
-                    {opt?.label ?? i}
-                  </Badge>
-                );
-              })
-            ) : (
-              <span className="text-sm text-muted-foreground">None selected</span>
-            )}
-          </dd>
-        </div>
-      </div>
-
-      <p className="mt-6 text-balance text-center text-muted-foreground">
-        Your journey: a personalized introduction to the culture connected to your
-        heritage.
-      </p>
-
-      <Button onClick={onBegin} size="lg" className="mt-8 h-11 rounded-full text-base">
-        Begin My Journey
-      </Button>
-    </main>
-  );
-}
-
-function SummaryRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between border-t border-border py-2">
-      <dt className="text-sm font-medium text-foreground">{label}</dt>
-      <dd className="text-sm text-muted-foreground">{value}</dd>
+  const classes = `relative grid cursor-pointer grid-cols-[auto_1fr] items-start gap-3 rounded-xl border bg-card p-4 text-sm ring-1 ring-transparent transition-colors ${
+    checked
+      ? "border-gold-deep/50 ring-gold-deep/20 bg-gold/5"
+      : "border-border/70 hover:border-foreground/20"
+  }`;
+  return htmlFor ? (
+    <Label htmlFor={htmlFor} className={classes}>
+      {children}
+    </Label>
+  ) : (
+    <div data-slot="option-card" className={classes}>
+      {children}
     </div>
   );
+}
+
+function OptionBlurb({ children }: { children: React.ReactNode }) {
+  return <span className="col-start-2 text-xs text-muted-foreground">{children}</span>;
 }

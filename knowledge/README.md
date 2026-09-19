@@ -1,44 +1,57 @@
 # Knowledge Base — My People
 
-Sources of truth for the My People cultural companion. All AI answers are grounded in the
-documents below; nothing is fabricated.
+Sources of truth for the My People cultural companion. Every AI answer and every daily
+lesson is grounded in the curated documents below; nothing is fabricated.
 
 ## Sources
 
-### 1. Akan Civilization and History
-- **Author:** Kwasi Ampene (Tufts University, USA)
-- **Published in:** *Música e Cultura*, vol. 13, no. 3 (2024), pp. 194–256 · ISSN 1980-3303
-- **File:** `akan-sources/Akan_Civilization_and_History_African_Musicologica.pdf`
-- **Notes:** Cover article of the dossier *Etnomusicologia Negra: Caminhos, Contribuições,
-  Pensamento e Legado*. Approaches Akan civilization from a contemporary African
-  musicological perspective. Extracted verbatim from the PDF distributed by the journal.
+### 1. Introductory Lesson on Greetings in Asante Twi
+- **File:** `akan-sources/Introductory-Lesson-on-Greetings-in-Asante-Twi.txt`
+- **Source id:** `asante-twi-greetings-intro`
+- **Used in:** Days 1–2 · topics: greetings, language, etiquette
+- **Claim type:** language · authority: medium · specificity: explicit · verified: no
 
-### 2. Indigenous and Exogenous Sources (book review)
-- **Reviewer:** Emmanuel Ababio Ofosu-Mensah (University of Ghana)
-- **Reviewed work:** Kwasi Konadu, *The Akan People: A Documentary History*, Princeton, NJ:
-  Markus Wiener Publishers, 2014.
-- **Published in:** *The Journal of African History*, vol. 56, no. 3 (2015), pp. 493–494.
-  DOI: `10.1017/S0021853715000481`
-- **File:** `akan-sources/div-class-title-…-2014….pdf`
-- **Notes:** PDF is the Cambridge Core copy downloaded by the University of Ghana (pages
-  493–494). It summarises the two categories of source — indigenous (oral traditions,
-  Reindorf, Fynn, Rattray) and exogenous (Iberian, Dutch, French, English, Islamic).
+### 2. Being Polite in Asante Twi
+- **File:** `akan-sources/Being polite in Asante Twi.txt`
+- **Source id:** `asante-twi-politeness`
+- **Used in:** Days 2–3 · topics: politeness, etiquette, greetings
+- **Claim type:** etiquette · authority: medium · specificity: explicit · verified: no
 
-> Both files were provided by the project owner. This MVP makes them the entire curated
-> knowledge base — a deliberate demo constraint, not an endorsement that these two
-> documents are the whole of Akan culture.
+> Metadata lives in `akan-sources/manifest.json`. Both files were provided by the
+> project owner; they are the entire curated knowledge base for this MVP — a
+> deliberate demo constraint, not the whole of Asante culture. Both are tagged
+> **provisional** until the owner re-tags them against their originals.
+
+## Corpus details
+
+- Two whole-file chunks (~2.5 KB total, ~130 terms after tokenizing).
+- Ingest normalizes glyphs so OCR-style characters match their intended letters:
+  ⊃/ↄ → ɔ, Ɛ/Ɔ → ɛ/ɔ, NBSP → space, collapses runs of whitespace.
+- TF-IDF ranking works as a fallback when no OpenAI key is present; embeddings are
+  added when `OPENAI_API_KEY` is set.
 
 ## Indexing
 
-`package.json` scripts:
-- `npm run ingest` — extract text from both PDFs, chunk it, build TF-IDF
-  (+ optional OpenAI embeddings when `OPENAI_API_KEY` is set), write
-  `lib/rag/index.json`.
+- `npm run ingest` — extract text from `akan-sources/*.txt` (+ `.pdf` if present),
+  normalize, chunk, stamp manifest metadata, add OpenAI embeddings when the key is
+  present, and write `lib/rag/index.json` (v3).
 - The server loads `lib/rag/index.json` at request time. If it is missing, the first
-  request triggers an automatic ingest so the demo never breaks.
+  request triggers an automatic re-ingest so the demo never breaks.
+
+## Retrieval
+
+- `retrieveForDay(day, spec, k)` filters chunks by `lesson_days` / topics metadata
+  first, then scores the query against chunk text and a provenance boost
+  (authority + asante-specificity + verified).
+- Day 1–7 content in `lib/rag/day.ts` is **deterministic and grounded**: phrases
+  appear only if their tokens are found in the retrieved corpus (`hasTokens` gating),
+  so a missing source quietly shrinks a lesson instead of inventing content.
 
 ## Provenance rules
 
-1. Every AI answer returns the document title(s) used, shown under **Sources**.
-2. Chunks carry their source page number where available.
-3. If retrieval cannot support a claim, the answer says so plainly.
+1. Every AI answer and every day view returns source references (title, page where
+   known, authority, specificity, verified flag) rendered under **Sources**.
+2. Unverified material is flagged inline and with an "Unverified account" badge —
+   including the Day 4 composed story (`verified: false`).
+3. If retrieval cannot support a claim, the content says so plainly and the schedule
+   is kept honest rather than padded with fabrication.

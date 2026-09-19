@@ -1,12 +1,13 @@
-import type { CulturalProfile, SourceReference } from "@/lib/types";
+import type { SourceReference, UserProfile } from "@/lib/types";
 import { retrieve } from "@/lib/rag/index";
 import {
-  buildSystemPrompt,
+  buildChatSystemPrompt,
   buildUserPrompt,
   formatContext,
   sourceReferences,
   type ContextHit,
 } from "@/lib/rag/prompt";
+import { tryLLM } from "@/lib/rag/llm-utils";
 import { buildFallbackAnswer } from "@/lib/rag/fallback";
 
 export interface GuideResult {
@@ -16,101 +17,34 @@ export interface GuideResult {
   provider?: string;
 }
 
-interface LllmResult {
-  ok: true;
-  content: string;
-  provider: string;
+function toContextHits(
+  chunks: { text: string; sourceTitle: string; page?: number; meta?: import("@/lib/types").ChunkMetadata }[],
+): ContextHit[] {
+  return chunks.map((c) => ({
+    text: c.text,
+    title: c.sourceTitle,
+    page: c.page,
+    url: c.meta?.source_url,
+    authority: c.meta?.authority_level,
+    specificity: c.meta?.asante_specificity,
+    verified: c.meta?.verified,
+  }));
 }
 
-async function callAnthropic(system: string, user: string): Promise<LllmResult> {
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-api-key": process.env.ANTHROPIC_API_KEY!,
-      "anthropic-version": "2023-06-01",
-    },
-    body: JSON.stringify({
-      model: process.env.ANTHROPIC_MODEL ?? "claude-3-5-sonnet-20241022",
-      max_tokens: 700,
-      system,
-      messages: [{ role: "user", content: user }],
-    }),
-    signal: AbortSignal.timeout(30000),
-  });
-  if (!res.ok) throw new Error(`anthropic ${res.status}`);
-  const json = (await res.json()) as {
-    content?: { type: string; text?: string }[];
-  };
-  const text = json.content
-    ?.filter((b) => b.type === "text")
-    .map((b) => b.text ?? "")
-    .join("")
-    .trim();
-  if (!text) throw new Error("anthropic empty response");
-  return { ok: true, content: text, provider: "anthropic" };
-}
-
-async function callOpenAI(system: string, user: string): Promise<LllmResult> {
-  const res = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      authorization: `Bearer ${process.env.OPENAI_API_KEY!}`,
-    },
-    body: JSON.stringify({
-      model: process.env.OPENAI_MODEL ?? "gpt-4o-mini",
-      max_tokens: 700,
-      messages: [
-        { role: "system", content: system },
-        { role: "user", content: user },
-      ],
-    }),
-    signal: AbortSignal.timeout(30000),
-  });
-  if (!res.ok) throw new Error(`openai ${res.status}`);
-  const json = (await res.json()) as {
-    choices?: { message?: { content?: string } }[];
-  };
-  const text = json.choices?.[0]?.message?.content?.trim();
-  if (!text) throw new Error("openai empty response");
-  return { ok: true, content: text, provider: "openai" };
-}
-
-async function tryLLM(
-  question: string,
-  profile: CulturalProfile,
-  context: ContextHit[],
-): Promise<LllmResult | { ok: false }> {
-  const system = buildSystemPrompt(profile);
-  const user = buildUserPrompt(question, formatContext(context));
-
-  const forced = process.env.LLM_PROVIDER;
-  if (forced === "anthropic" && process.env.ANTHROPIC_API_KEY) {
-    return callAnthropic(system, user);
-  }
-  if (forced === "openai" && process.env.OPENAI_API_KEY) {
-    return callOpenAI(system, user);
-  }
-  if (process.env.OPENAI_API_KEY) return callOpenAI(system, user);
-  if (process.env.ANTHROPIC_API_KEY) return callAnthropic(system, user);
-  return { ok: false };
-}
-
-/** Full pipeline: retrieve → prompt → LLM (or demo fallback). */
+/** Full pipeline for the free-form /ask screen: retrieve → prompt → LLM
+ *  (or a demo fallback when no provider is configured). */
 export async function askGuide(
   question: string,
-  profile: CulturalProfile,
+  profile: UserProfile,
 ): Promise<GuideResult> {
-  const hits = await retrieve(question, profile, 6);
-  const context: ContextHit[] = hits.map((h) => ({
-    text: h.chunk.text,
-    title: h.chunk.sourceTitle,
-    page: h.chunk.page,
-  }));
+  const hits = await retrieve(question, {}, 6);
+  const context: ContextHit[] = toContextHits(hits.map((h) => h.chunk));
   const sources = sourceReferences(context);
 
-  const llm = await tryLLM(question, profile, context);
+  const system = buildChatSystemPrompt(profile);
+  const user = buildUserPrompt(question, formatContext(context));
+  const llm = await tryLLM(system, user);
+
   if (llm.ok) {
     return { content: llm.content, mode: "rag", sources, provider: llm.provider };
   }

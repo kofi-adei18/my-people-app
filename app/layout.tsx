@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
 import { ProfileProvider } from "@/lib/profile-context";
+import { EventsProvider } from "@/lib/events-context";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -32,7 +33,9 @@ export default function RootLayout({
       className={`${inter.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="min-h-full">
-        <ProfileProvider>{children}</ProfileProvider>
+        <ProfileProvider>
+          <EventsProvider>{children}</EventsProvider>
+        </ProfileProvider>
       </body>
     </html>
   );

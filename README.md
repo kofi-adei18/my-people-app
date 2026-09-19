@@ -1,5 +1,23 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Cultural event briefings (calendar integration)
+
+My People reads your calendar, detects likely cultural events (funerals,
+weddings/engagements), and generates a grounded briefing — greetings, what to
+wear, how to conduct yourself — a configurable number of days before the event
+(default: 7). On `/settings` you can:
+
+- **Connect Google Calendar** (read-only OAuth in the browser; set
+  `NEXT_PUBLIC_GOOGLE_CLIENT_ID` — see `.env.example`), or
+- **Import an `.ics` file** (no keys needed — try `public/sample-calendar.ics`), or
+- **Add events manually.**
+
+Detection runs entirely on-device (keyword matching, `lib/calendar/detect.ts`);
+you confirm the event type and answer a short questionnaire before a briefing
+is generated. Briefings are grounded in curated event playbooks plus the
+greetings corpus, carry Sources and unverified badges, and can be saved to the
+Culture Bank.
+
 ## Getting Started
 
 First, run the development server:

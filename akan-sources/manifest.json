@@ -1,22 +1,42 @@
 {
   "sources": [
     {
-      "id": "ampene-akan-civilization-history",
-      "file": "Akan_Civilization_and_History_African_Musicologica.pdf",
-      "title": "Akan Civilization and History",
-      "author": "Kwasi Ampene",
-      "source": "Música e Cultura, vol. 13, no. 3 (2024)",
-      "description": "Scholarly article by Kwasi Ampene (Tufts University) on Akan civilization and history, approached through contemporary African musicological inquiry. Cover article of the special dossier \"Etnomusicologia Negra\".",
-      "tags": ["history", "stories", "language", "traditions", "proverbs"]
+      "source_id": "asante-twi-greetings-intro",
+      "file": "Introductory-Lesson-on-Greetings-in-Asante-Twi.txt",
+      "title": "Introductory Lesson on Greetings in Asante Twi",
+      "url": "",
+      "source_type": "educational",
+      "cultural_group": ["Asante"],
+      "language": ["Asante Twi", "Twi"],
+      "country": "Ghana",
+      "topic": ["greetings", "language", "etiquette"],
+      "lesson_days": [1, 2],
+      "content_type": ["language", "culture"],
+      "audience": ["beginner"],
+      "authority_level": "medium",
+      "asante_specificity": "explicit",
+      "claim_type": "language",
+      "verified": false,
+      "notes": "Provisional tags pending owner review. Establishes Maakye/Maaha/Maadwo, Yaa agya/ena/nua, handshake order."
     },
     {
-      "id": "akan-people-documentary-history-review",
-      "file": "div-class-title-indigenous-and-exogenous-sources-the-akan-people-a-documentary-history-by-kwasikonadu-princeton-nj-markus-wiener-publishers-2014-pp-xv-446-68-95-hardback-isbn-978-0-44879-5795-div1.pdf",
-      "title": "Indigenous and Exogenous Sources",
-      "author": "Emmanuel Ababio Ofosu-Mensah, University of Ghana",
-      "source": "The Journal of African History, vol. 56, no. 3 (2015), pp. 493–494",
-      "description": "Book review of Kwasi Konadu, \"The Akan People: A Documentary History\" (Markus Wiener Publishers, 2014). Surveys how Akan history has been reconstructed from indigenous (oral) and exogenous (European/Islamic) written sources, including naming politics, oral traditions, Asante and Fante states and states of knowledge about Akan origins.",
-      "tags": ["history", "stories", "names", "traditions", "family"]
+      "source_id": "asante-twi-politeness",
+      "file": "Being polite in Asante Twi.txt",
+      "title": "Being Polite in Asante Twi",
+      "url": "",
+      "source_type": "educational",
+      "cultural_group": ["Asante"],
+      "language": ["Asante Twi", "Twi"],
+      "country": "Ghana",
+      "topic": ["politeness", "etiquette", "greetings"],
+      "lesson_days": [2, 3],
+      "content_type": ["language", "culture"],
+      "audience": ["beginner"],
+      "authority_level": "medium",
+      "asante_specificity": "explicit",
+      "claim_type": "etiquette",
+      "verified": false,
+      "notes": "Provisional tags pending owner review. Titles (Owura/Awuraa/Nana/ɔpanyin), how-are-you, please/thank-you."
     }
   ]
 }

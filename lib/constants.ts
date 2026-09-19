@@ -1,131 +1,214 @@
 import type {
-  CulturalProfile,
-  Interest,
-  KnowledgeLevel,
-  Language,
-  Lesson,
+  EventType,
+  CulturalConnectionLevel,
+  FamilyKnowledgeLevel,
+  LearningGoal,
+  LearningPreference,
+  UserLocation,
 } from "@/lib/types";
 
-export const HERITAGE_OPTIONS = ["Akan"] as const;
+// ─── Onboarding (5 questions, spec §3) ────────────────────────────────────────
 
-export const LANGUAGE_OPTIONS: Language[] = [
-  "Twi",
-  "Fante",
-  "English / Learning Twi",
-  "Other",
+export const LOCATION_OPTIONS: { value: UserLocation; label: string; blurb: string }[] = [
+  {
+    value: "Ghana",
+    label: "Ghana",
+    blurb: "You're currently immersed in Ghanaian life.",
+  },
+  {
+    value: "United Kingdom",
+    label: "United Kingdom",
+    blurb: "Living in the UK — learning from abroad.",
+  },
+  {
+    value: "United States",
+    label: "United States",
+    blurb: "Living in the US — learning from abroad.",
+  },
+  {
+    value: "Canada",
+    label: "Canada",
+    blurb: "Living in Canada — learning from abroad.",
+  },
+  {
+    value: "Europe",
+    label: "Europe",
+    blurb: "Somewhere in Europe — learning from abroad.",
+  },
+  {
+    value: "Other",
+    label: "Other",
+    blurb: "Somewhere else — you'll tell us more.",
+  },
 ];
 
-export const KNOWLEDGE_LEVELS: {
-  value: KnowledgeLevel;
+export const CULTURAL_CONNECTION_OPTIONS: {
+  value: CulturalConnectionLevel;
   label: string;
   blurb: string;
 }[] = [
-  {
-    value: "beginner",
-    label: "I'm just starting",
-    blurb: "Fresh to the culture — every word is new and welcome.",
-  },
-  {
-    value: "some",
-    label: "I know a little",
-    blurb: "Bits and pieces from home, school, or visits.",
-  },
-  {
-    value: "familiar",
-    label: "I know quite a bit",
-    blurb: "Comfortable with the basics, ready to go deeper.",
-  },
+  { value: "very", label: "Very connected", blurb: "The culture is a live part of your everyday life." },
+  { value: "somewhat", label: "Somewhat connected", blurb: "You feel a real but partial tie to it." },
+  { value: "some", label: "I know some things", blurb: "You carry pieces of it, even if unevenly." },
+  { value: "barely", label: "I barely know anything", blurb: "The culture feels distant right now." },
+  { value: "not-sure", label: "I'm not sure", blurb: "You're still figuring out what it means to you." },
 ];
 
-export const INTERESTS: { value: Interest; label: string; blurb: string }[] = [
-  { value: "stories", label: "Stories", blurb: "Folktales, myth, oral tradition" },
-  { value: "proverbs", label: "Proverbs", blurb: "Wisdom in a few words" },
-  { value: "names", label: "Names & family", blurb: "Naming and kinship" },
-  { value: "traditions", label: "Traditions", blurb: "Ceremony and custom" },
-  { value: "history", label: "History", blurb: "Origins and the past" },
-  { value: "language", label: "Language", blurb: "Twi words and usage" },
+export const LEARNING_GOAL_OPTIONS: {
+  value: LearningGoal;
+  label: string;
+  blurb: string;
+}[] = [
+  { value: "language", label: "Language", blurb: "Asante Twi words and how to use them" },
+  { value: "greetings-etiquette", label: "Greetings & etiquette", blurb: "How people greet and show respect" },
+  { value: "history", label: "History", blurb: "Where the Asante story comes from" },
+  { value: "traditions", label: "Traditions", blurb: "Ceremonies, customs and everyday practice" },
+  { value: "family-heritage", label: "Family heritage", blurb: "Your own family's hand in the culture" },
+  { value: "stories", label: "Stories", blurb: "The tales and accounts that carry meaning" },
+  { value: "names-meanings", label: "Names & meanings", blurb: "Names and what they say about a person" },
+  { value: "cultural-events", label: "How to behave at cultural events", blurb: "Feeling confident at gatherings and ceremonies" },
 ];
 
-export const LEVEL_LABELS: Record<KnowledgeLevel, string> = {
-  beginner: "Just starting",
-  some: "A little",
-  familiar: "Quite a bit",
+export const FAMILY_KNOWLEDGE_OPTIONS: {
+  value: FamilyKnowledgeLevel;
+  label: string;
+  blurb: string;
+}[] = [
+  { value: "a-lot", label: "A lot", blurb: "You know your family's Asante background well." },
+  { value: "some", label: "Some things", blurb: "You know meaningful pieces of it." },
+  { value: "very-little", label: "Very little", blurb: "A few fragments, at most." },
+  { value: "almost-nothing", label: "Almost nothing", blurb: "There's a gap you'd like to close." },
+  { value: "not-sure", label: "I'm not sure", blurb: "You're not ready to say — and that's fine." },
+];
+
+export const LEARNING_PREFERENCE_OPTIONS: {
+  value: LearningPreference;
+  label: string;
+  blurb: string;
+}[] = [
+  { value: "speaking", label: "Speaking the language", blurb: "Words, phrases, pronunciation first." },
+  { value: "behavior", label: "Understanding how people behave", blurb: "Etiquette, respect, body language." },
+  { value: "history", label: "Understanding history", blurb: "The story behind what people do." },
+  { value: "family", label: "Connecting with family", blurb: "Discoveries that involve the people you love." },
+  { value: "events", label: "Being confident at cultural events", blurb: "Walking into gatherings and ceremonies ready." },
+  { value: "bit-of-everything", label: "A bit of everything", blurb: "All of it, gradually." },
+];
+
+export const CONNECTION_LABELS: Record<CulturalConnectionLevel, string> = {
+  very: "Very connected",
+  somewhat: "Somewhat connected",
+  some: "Knows some things",
+  barely: "Barely knows anything",
+  "not-sure": "Not sure yet",
 };
 
-export const INTEREST_LABELS: Record<Interest, string> = {
-  stories: "Stories",
-  proverbs: "Proverbs",
-  names: "Names & family",
-  traditions: "Traditions",
-  history: "History",
+export const FAMILY_KNOWLEDGE_LABELS: Record<FamilyKnowledgeLevel, string> = {
+  "a-lot": "A lot",
+  some: "Some things",
+  "very-little": "Very little",
+  "almost-nothing": "Almost nothing",
+  "not-sure": "Not sure",
+};
+
+export const GOAL_LABELS: Record<LearningGoal, string> = {
   language: "Language",
+  "greetings-etiquette": "Greetings & etiquette",
+  history: "History",
+  traditions: "Traditions",
+  "family-heritage": "Family heritage",
+  stories: "Stories",
+  "names-meanings": "Names & meanings",
+  "cultural-events": "How to behave at cultural events",
 };
 
-export const DEMO_PROFILE: CulturalProfile = {
-  heritage: "Akan",
-  language: "Twi",
-  knowledgeLevel: "beginner",
-  interests: ["proverbs", "names", "traditions"],
+export const PREFERENCE_LABELS: Record<LearningPreference, string> = {
+  speaking: "Speaking the language",
+  behavior: "How people behave",
+  history: "Understanding history",
+  family: "Connecting with family",
+  events: "Confidence at cultural events",
+  "bit-of-everything": "A bit of everything",
 };
 
-export const LESSONS: Lesson[] = [
-  {
-    slug: "understanding-your-akan-heritage",
-    title: "Understanding Your Akan Heritage",
-    description:
-      "Meet the Akan world: where it begins, what holds it together, and what heritage actually means.",
-  },
-  {
-    slug: "akan-names-and-family",
-    title: "Akan Names & Family",
-    description:
-      "The naming ceremony, day names, and the bonds that make Akan kinship.",
-  },
-  {
-    slug: "the-wisdom-of-proverbs",
-    title: "The Wisdom of Proverbs",
-    description:
-      "Learn how a few words carry generations of counsel.",
-  },
-  {
-    slug: "traditions-and-ceremonies",
-    title: "Traditions & Ceremonies",
-    description:
-      "The rites and festivals that mark an Akan year.",
-  },
-  {
-    slug: "discover-your-family-story",
-    title: "Discover Your Family Story",
-    description:
-      "Open the door to your own family's history — and the people who keep it.",
-  },
-];
+// ─── Demo seed ────────────────────────────────────────────────────────────────
+
+export const DEMO_PROFILE = {
+  id: "demo",
+  location: "United Kingdom" as const,
+  culturalConnectionLevel: "somewhat" as const,
+  familyKnowledgeLevel: "very-little" as const,
+  learningGoals: ["greetings-etiquette", "language", "family-heritage"] as const,
+  preferredLearningStyle: "bit-of-everything" as const,
+  culturalGroup: "Asante" as const,
+  language: "Asante Twi" as const,
+  createdAt: 0,
+};
+
+// ─── Suggested questions for the Ask screen ───────────────────────────────────
 
 export const SUGGESTED_QUESTIONS: { label: string; question: string }[] = [
   {
-    label: "Why are proverbs important in Akan culture?",
-    question: "Why are proverbs important in Akan culture?",
+    label: "Why do greetings matter so much in Asante culture?",
+    question: "Why do greetings matter so much in Asante culture?",
   },
   {
-    label: "What does my Akan heritage mean?",
-    question: "What does my Akan heritage mean?",
+    label: "How do I greet an elder respectfully?",
+    question: "How do I greet an elder respectfully?",
   },
   {
-    label: "Why are family and ancestry important?",
-    question: "Why are family and ancestry important?",
+    label: "What does Mepa wo kyɛw mean?",
+    question: "What does Mepa wo kyɛw mean?",
   },
   {
-    label: "Tell me about Akan naming traditions.",
-    question: "Tell me about Akan naming traditions.",
-  },
-  {
-    label: "Teach me a Twi word connected to today's lesson.",
-    question: "Teach me a Twi word connected to today's lesson.",
+    label: "Teach me an Asante Twi greeting.",
+    question: "Teach me an Asante Twi greeting.",
   },
 ];
 
-export const ASK_FAMILY_PROMPT =
-  "Ask a parent or grandparent: Where does our family come from, and what traditions did you grow up with?";
+// ─── Storage keys ─────────────────────────────────────────────────────────────
 
-export const LEARN_LESSON_STORAGE = "my-people:completed-lessons";
-export const PROFILE_STORAGE_KEY = "my-people:profile";
+export const PROFILE_STORAGE_KEY = "my-people:profile:v2";
+export const PROGRESS_STORAGE_KEY = "my-people:progress:v2";
+export const RESET_STORAGE_KEYS = [PROFILE_STORAGE_KEY, PROGRESS_STORAGE_KEY];
+
+// ─── Calendar events ──────────────────────────────────────────────────────────
+
+export const EVENTS_STORAGE_KEY = "my-people:events:v1";
+
+// ─── Event prep journeys ───────────────────────────────────────────────────────
+
+/** Fixed stage order for a prep journey walk-through. */
+export const PREP_STEP_ORDER = [
+  "what",
+  "happens",
+  "who",
+  "say",
+  "wear",
+  "avoid",
+] as const;
+
+export const PREP_STEP_LABELS: Record<
+  (typeof PREP_STEP_ORDER)[number],
+  string
+> = {
+  what: "What is it?",
+  happens: "What will happen",
+  who: "Who matters",
+  say: "What to say",
+  wear: "What to wear",
+  avoid: "What not to do",
+};
+
+export const EVENT_TYPE_LABELS: Record<EventType, string> = {
+  funeral: "Funeral",
+  wedding: "Wedding / engagement",
+};
+
+export const LEAD_TIME_OPTIONS: { value: number; label: string }[] = [
+  { value: 3, label: "3 days before" },
+  { value: 7, label: "7 days before" },
+  { value: 14, label: "2 weeks before" },
+  { value: 30, label: "30 days before" },
+];
+
+export const GOOGLE_SCOPE = "https://www.googleapis.com/auth/calendar.readonly";

@@ -1,0 +1,40 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//My People//Demo Calendar//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:sample-akosua-funeral@my-people
+DTSTAMP:20260901T090000Z
+DTSTART;VALUE=DATE:20261003
+DTEND;VALUE=DATE:20261004
+SUMMARY:Final funeral rites — Akosua Mansa (Auntie Akosua)
+DESCRIPTION:One-week observance completed last month\, final rites at the
+  family house in Kumasi. Wear black cloth.
+LOCATION:Family house\, Kumasi
+END:VEVENT
+BEGIN:VEVENT
+UID:sample-akosua-one-week@my-people
+DTSTART;VALUE=DATE:20260926
+DTEND;VALUE=DATE:20260927
+SUMMARY:One week observance — Akosua Mansa
+DESCRIPTION:Adua at the family house
+LOCATION:Kumasi
+END:VEVENT
+BEGIN:VEVENT
+UID:sample-wedding@my-people
+DTSTAMP:20260901T090000Z
+DTSTART;VALUE=DATE:20261017
+DTEND:20261017T180000Z
+SUMMARY:Engagement ceremony — Ama & Kwabena
+DESCRIPTION:Traditional marriage at Maame Efua's house\, followed by rece
+  ption. Colour theme: gold and green.
+LOCATION:Cape Coast
+END:VEVENT
+BEGIN:VEVENT
+UID:sample-birthday@my-people
+DTSTART;VALUE=DATE:20261010
+DTEND:20261010T180000Z
+SUMMARY:Dinner with Adwoa
+LOCATION:Accra
+END:VEVENT
+END:VCALENDAR
