@@ -1,0 +1,42 @@
+{
+  "sources": [
+    {
+      "source_id": "asante-twi-greetings-intro",
+      "file": "Introductory-Lesson-on-Greetings-in-Asante-Twi.txt",
+      "title": "Introductory Lesson on Greetings in Asante Twi",
+      "url": "",
+      "source_type": "educational",
+      "cultural_group": ["Asante"],
+      "language": ["Asante Twi", "Twi"],
+      "country": "Ghana",
+      "topic": ["greetings", "language", "etiquette"],
+      "lesson_days": [1, 2],
+      "content_type": ["language", "culture"],
+      "audience": ["beginner"],
+      "authority_level": "medium",
+      "asante_specificity": "explicit",
+      "claim_type": "language",
+      "verified": false,
+      "notes": "Provisional tags pending owner review. Establishes Maakye/Maaha/Maadwo, Yaa agya/ena/nua, handshake order."
+    },
+    {
+      "source_id": "asante-twi-politeness",
+      "file": "Being polite in Asante Twi.txt",
+      "title": "Being Polite in Asante Twi",
+      "url": "",
+      "source_type": "educational",
+      "cultural_group": ["Asante"],
+      "language": ["Asante Twi", "Twi"],
+      "country": "Ghana",
+      "topic": ["politeness", "etiquette", "greetings"],
+      "lesson_days": [2, 3],
+      "content_type": ["language", "culture"],
+      "audience": ["beginner"],
+      "authority_level": "medium",
+      "asante_specificity": "explicit",
+      "claim_type": "etiquette",
+      "verified": false,
+      "notes": "Provisional tags pending owner review. Titles (Owura/Awuraa/Nana/ɔpanyin), how-are-you, please/thank-you."
+    }
+  ]
+}
