@@ -6,6 +6,7 @@ import {
   existsSync,
 } from "node:fs";
 import { join } from "node:path";
+import { tmpdir } from "node:os";
 import type {
   FamilyData,
   FamilyKnowledge,
@@ -22,7 +23,12 @@ import { uid } from "@/lib/id";
 // knowledge). `data/` is gitignored; it is created from the seed on first
 // request. Swapping to Supabase later means reimplementing this module only.
 
-const DATA_DIR = join(process.cwd(), "data");
+// On Vercel the deployment filesystem is read-only (only /tmp is writable)
+// and `data/` is not part of the build, so the store lives in the temp dir
+// there. Data is seeded on cold start and is ephemeral per instance.
+const DATA_DIR = process.env.VERCEL
+  ? join(tmpdir(), "my-people-data")
+  : join(process.cwd(), "data");
 const DATA_FILE = join(DATA_DIR, "family.json");
 const AUDIO_DIR = join(DATA_DIR, "audio");
 

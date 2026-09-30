@@ -33,13 +33,26 @@ export function FamilyView() {
     inputRef.current?.focus();
   }, []);
 
+  const payloadRef = useRef<ThreadPayload | null>(null);
+
   const refresh = useCallback(async () => {
     try {
       const res = await fetch("/api/family/thread", { cache: "no-store" });
-      const json = (await res.json()) as { ok: boolean } & ThreadPayload;
-      if (json.ok) setPayload(json);
+      const json = (await res.json()) as {
+        ok: boolean;
+        error?: string;
+      } & ThreadPayload;
+      if (json.ok) {
+        payloadRef.current = json;
+        setPayload(json);
+        setError(null);
+      } else if (!payloadRef.current) {
+        setError(json.error ?? "Could not load the conversation.");
+      }
     } catch {
-      // Keep the current state; the poll will retry.
+      if (!payloadRef.current) {
+        setError("Could not reach the server. Retrying…");
+      }
     }
   }, []);
 
@@ -47,10 +60,21 @@ export function FamilyView() {
     (async () => {
       try {
         const res = await fetch("/api/family/thread", { cache: "no-store" });
-        const json = (await res.json()) as { ok: boolean } & ThreadPayload;
-        if (json.ok) setPayload(json);
+        const json = (await res.json()) as {
+          ok: boolean;
+          error?: string;
+        } & ThreadPayload;
+        if (json.ok) {
+          payloadRef.current = json;
+          setPayload(json);
+          setError(null);
+        } else if (!payloadRef.current) {
+          setError(json.error ?? "Could not load the conversation.");
+        }
       } catch {
-        // The poll below will retry.
+        if (!payloadRef.current) {
+          setError("Could not reach the server. Retrying…");
+        }
       }
     })();
   }, []);
@@ -150,6 +174,11 @@ export function FamilyView() {
     return (
       <main className="mx-auto w-full max-w-3xl px-4 pt-10 sm:px-6">
         <div className="mx-auto max-w-2xl space-y-3">
+          {error && (
+            <p className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
+              {error}
+            </p>
+          )}
           <Skeleton className="h-10 w-2/3" />
           <Skeleton className="h-4 w-1/2" />
           <Skeleton className="mt-8 h-[45svh] w-full rounded-2xl" />

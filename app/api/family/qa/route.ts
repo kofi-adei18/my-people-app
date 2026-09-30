@@ -3,6 +3,7 @@ import { storiesFor } from "@/lib/family/store";
 import { answerFamilyQuestion } from "@/lib/family/ai";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   try {

@@ -15,6 +15,7 @@ import { extractStories } from "@/lib/family/ai";
 import type { FamilyMessage, FamilyUser } from "@/lib/family/types";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 interface ThreadPayload {
   threadId: string;
@@ -47,12 +48,26 @@ function payload(recipientId: string): ThreadPayload {
 }
 
 export async function GET(req: NextRequest) {
-  const recipientId =
-    req.nextUrl.searchParams.get("recipient") ?? relativeUsers()[0]?.id;
-  if (!recipientId) {
-    return NextResponse.json({ ok: false, error: "No connected relatives." }, { status: 404 });
+  try {
+    const recipientId =
+      req.nextUrl.searchParams.get("recipient") ?? relativeUsers()[0]?.id;
+    if (!recipientId) {
+      return NextResponse.json(
+        { ok: false, error: "No connected relatives." },
+        { status: 404 },
+      );
+    }
+    return NextResponse.json({ ok: true, ...payload(recipientId) });
+  } catch (err) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "Could not load the conversation.",
+        detail: err instanceof Error ? err.message : String(err),
+      },
+      { status: 500 },
+    );
   }
-  return NextResponse.json({ ok: true, ...payload(recipientId) });
 }
 
 export async function POST(req: NextRequest) {

@@ -57,9 +57,11 @@ function loadIndex(): RagIndex {
   }
 }
 
-/** Kick off an async index rebuild exactly once per process. Does not block. */
+/** Kick off an async index rebuild exactly once per process. Does not block.
+ *  Skipped on Vercel, where spawning the ingest script is not possible —
+ *  the committed index.json ships with the build instead. */
 function ensureIndexInBackground(): void {
-  if (indexPromise) return;
+  if (indexPromise || process.env.VERCEL) return;
   indexPromise = spawnIngest().finally(() => {
     indexPromise = null;
     cachedIndex = loadIndex();

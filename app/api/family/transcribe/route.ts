@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { AUDIO_DIR } from "@/lib/family/store";
+import { AUDIO_DIR, ensureSeed } from "@/lib/family/store";
 import { transcribeAudio } from "@/lib/family/transcribe";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 const MAX_BYTES = 25 * 1024 * 1024;
 
@@ -55,8 +56,12 @@ export async function POST(req: NextRequest) {
     }
 
     // Keep the recording so the family story can be played back later.
+    ensureSeed();
     const audioId = randomUUID();
-    await writeFile(join(AUDIO_DIR, `${audioId}.${ext}`), bytes);
+    await writeFile(
+      join(/* turbopackIgnore: true */ AUDIO_DIR, `${audioId}.${ext}`),
+      bytes,
+    );
 
     return NextResponse.json({ ok: true, text, audioId });
   } catch (err) {
